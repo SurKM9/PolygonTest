@@ -12,6 +12,7 @@ MainWindow::MainWindow(QWidget* parent)
 {
     QGraphicsView* view = new QGraphicsView(this);
     view->setRenderHint(QPainter::Antialiasing);
+    view->setMouseTracking(true);
     m_scene = new CustomScene(view);
 
     view->setScene(m_scene);

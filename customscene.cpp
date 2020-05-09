@@ -59,11 +59,15 @@ void CustomScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
     QGraphicsScene::mouseReleaseEvent(event);
 }
 
+
+
 void CustomScene::storePoint(const QPointF& point)
 {
     m_points.append(point);
     updatePolygon();
 }
+
+
 
 void CustomScene::previewPoint(const QPointF& point)
 {
@@ -74,15 +78,21 @@ void CustomScene::previewPoint(const QPointF& point)
     }
 }
 
+
+
 void CustomScene::updatePolygon()
 {
     QPainterPath path;
     path.moveTo(m_points.first());
     for(const auto& point : m_points)
+    {
         path.lineTo(point);
+    }
     path.closeSubpath();
 
     if(m_polygon)
+    {
         m_polygon->updatePath(path);
+    }
 }
 

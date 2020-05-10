@@ -2,7 +2,6 @@
 #define POLYGONRESIZEHANDLE_H
 
 // qt
-#include <QGraphicsEllipseItem>
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsItem>
 #include <QRectF>
@@ -12,31 +11,44 @@ class PolygonItem;
 
 
 
-class PolygonResizeHandle : public QGraphicsEllipseItem
+class PolygonResizeHandle : public QGraphicsItem
 {
 
     public:
 
-        explicit PolygonResizeHandle(QGraphicsItem* parent = nullptr);
+        PolygonResizeHandle(QGraphicsItem* parent = nullptr);
 
         virtual QRectF boundingRect() const override;
 
-        void setIndex(uint32_t index);
+        class HandleItem : public QGraphicsEllipseItem
+        {
+            public:
 
-        uint32_t index() const;
+                HandleItem(int index, const QPointF& pos, PolygonResizeHandle* parent = nullptr);
+
+                int index() const;
+
+            protected:
+
+                virtual QVariant itemChange(GraphicsItemChange change,
+                                            const QVariant& value);
+
+            private:
+
+                PolygonResizeHandle* m_parent;
+                uint32_t m_index;
+        };
+
 
     protected:
 
-        virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = nullptr) override;
-
-        virtual void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
-        virtual void mouseMoveEvent(QGraphicsSceneMouseEvent* event) override;
-        virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent* event) override;
+        virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
 
     private:
 
+        void resize(int index, const QPointF& newPos);
         QRectF m_boundingRect;
-        uint32_t m_index;
         PolygonItem* m_parent;
+        QVector<HandleItem*> m_handles;
 };
 #endif // POLYGONRESIZEHANDLE_H

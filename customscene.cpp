@@ -1,5 +1,11 @@
+// qt
+#include <QGraphicsView>
+#include <QDebug>
+
+// local
 #include "customscene.h"
 #include "polygonitem.h"
+#include "polygonresizehandle.h"
 
 
 
@@ -14,6 +20,8 @@ CustomScene::CustomScene(QObject* parent) :
 void CustomScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
     const QPointF& m_origPoint = event->scenePos();
+
+    views().at(0)->setDragMode(QGraphicsView::NoDrag);
 
     if(event->button() == Qt::LeftButton)
     {
@@ -30,6 +38,9 @@ void CustomScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
 
     if(event->button() == Qt::RightButton && m_polygon != nullptr)
     {
+        // create resize handlers for polygon before setting it to null
+        PolygonResizeHandle* handle = new PolygonResizeHandle(m_polygon);
+
         m_polygon = nullptr;
     }
 
@@ -56,6 +67,7 @@ void CustomScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 
 void CustomScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 {
+    views().at(0)->setDragMode(QGraphicsView::RubberBandDrag);
     QGraphicsScene::mouseReleaseEvent(event);
 }
 

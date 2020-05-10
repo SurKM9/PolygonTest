@@ -21,5 +21,6 @@ class PolygonItem : public QGraphicsPathItem
     private:
 
         QPainterPath m_path;
+        QRectF m_boundingRect;
 };
 #endif // POLYGONITEM_H

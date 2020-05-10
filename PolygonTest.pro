@@ -19,12 +19,14 @@ SOURCES += \
     customscene.cpp \
     main.cpp \
     mainwindow.cpp \
-    polygonitem.cpp
+    polygonitem.cpp \
+    polygonresizehandle.cpp
 
 HEADERS += \
     customscene.h \
     mainwindow.h \
-    polygonitem.h
+    polygonitem.h \
+    polygonresizehandle.h
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

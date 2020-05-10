@@ -27,9 +27,14 @@ class CustomScene : public QGraphicsScene
 
     private:
 
-        QPointF m_origPoint;
+//        QPointF m_origPoint;
         PolygonItem* m_polygon;
-        QPainterPath m_path;
+//        QPainterPath m_path;
+        QVector<QPointF> m_points;
+        void storePoint(const QPointF& point);
+        void previewPoint(const QPointF& point);
+        void updatePolygon();
+
 };
 
 #endif // CUSTOMSCENE_H

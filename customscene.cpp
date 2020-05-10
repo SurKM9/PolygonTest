@@ -13,26 +13,23 @@ CustomScene::CustomScene(QObject* parent) :
 
 void CustomScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
-    m_origPoint = event->scenePos();
+    const QPointF& m_origPoint = event->scenePos();
 
     if(event->button() == Qt::LeftButton)
     {
         if(m_polygon == nullptr)
         {
-            m_path.moveTo(m_origPoint);
-            m_polygon = new PolygonItem(m_path);
+            m_points.clear();
+            m_polygon = new PolygonItem({});
             addItem(m_polygon);
+            storePoint(m_origPoint);
         }
-        else
-        {
-            m_path.lineTo(m_origPoint);
-            m_polygon->updatePath(m_path);
-        }
+
+        storePoint(m_origPoint);
     }
 
     if(event->button() == Qt::RightButton && m_polygon != nullptr)
     {
-        m_path.closeSubpath();
         m_polygon = nullptr;
     }
 
@@ -47,8 +44,7 @@ void CustomScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 {
     if(m_polygon != nullptr)
     {
-        m_path.lineTo(event->scenePos());
-        m_polygon->updatePath(m_path);
+        previewPoint(event->scenePos());
     }
 
     update();
@@ -62,3 +58,41 @@ void CustomScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 {
     QGraphicsScene::mouseReleaseEvent(event);
 }
+
+
+
+void CustomScene::storePoint(const QPointF& point)
+{
+    m_points.append(point);
+    updatePolygon();
+}
+
+
+
+void CustomScene::previewPoint(const QPointF& point)
+{
+    if(m_points.size()>1)
+    {
+        m_points.replace(m_points.size()-1, point);
+        updatePolygon();
+    }
+}
+
+
+
+void CustomScene::updatePolygon()
+{
+    QPainterPath path;
+    path.moveTo(m_points.first());
+    for(const auto& point : m_points)
+    {
+        path.lineTo(point);
+    }
+    path.closeSubpath();
+
+    if(m_polygon)
+    {
+        m_polygon->updatePath(path);
+    }
+}
+

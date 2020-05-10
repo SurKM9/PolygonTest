@@ -57,8 +57,10 @@ PolygonResizeHandle::PolygonResizeHandle(QGraphicsItem* parent) :
     // get the vertices from the path
     int vertices = polyPath.elementCount();
 
+    qDebug() << vertices;
+
     // create as many handles as vertices
-    for(int i = 0; i < vertices; i++)
+    for(int i = 1; i < vertices; i++)
     {
         // get the pos of the vertex in
         const QPointF& pos = QPointF(polyPath.elementAt(i).x, polyPath.elementAt(i).y);

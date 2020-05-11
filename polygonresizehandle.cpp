@@ -17,8 +17,7 @@ PolygonResizeHandle::HandleItem::HandleItem(int index, const QPointF& pos, Polyg
 {
     setPos(pos);
     setBrush(QBrush(Qt::red));
-    setFlag(ItemIsMovable);
-    setFlag(ItemSendsGeometryChanges);
+    setFlags(ItemIsMovable|ItemIsSelectable|ItemSendsScenePositionChanges);
 }
 
 

@@ -24,7 +24,7 @@ class PolygonResizeHandle : public QGraphicsItem
         class HandleItem : public QGraphicsEllipseItem
         {
             public:
-                enum {Type = QGraphicsItem::UserType + 1};
+                enum {Type = QGraphicsItem::UserType + 2};
                 int type() const override {return HandleItem::Type;}
                 HandleItem(int index, const QPointF& pos, PolygonResizeHandle* parent = nullptr);
 

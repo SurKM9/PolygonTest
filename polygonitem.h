@@ -9,6 +9,8 @@
 class PolygonItem : public QGraphicsPathItem
 {
     public:
+        enum {Type = QGraphicsItem::UserType + 3};
+        int type() const override {return PolygonItem::Type;}
 
         PolygonItem(const QPainterPath& path, QGraphicsItem* parent = nullptr);
 

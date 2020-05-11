@@ -27,6 +27,11 @@ void CustomScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
     {
         if(m_polygon == nullptr)
         {
+            static const QVector<int> knownTypes {PolygonItem::Type, PolygonResizeHandle::Type, PolygonResizeHandle::HandleItem::Type};
+            if(auto item = itemAt(m_origPoint,views().first()->transform()))
+                if(knownTypes.contains(item->type()))
+                    return QGraphicsScene::mousePressEvent(event);
+
             m_points.clear();
             m_polygon = new PolygonItem({});
             addItem(m_polygon);

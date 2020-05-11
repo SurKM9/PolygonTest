@@ -15,7 +15,8 @@ class PolygonResizeHandle : public QGraphicsItem
 {
 
     public:
-
+    enum {Type = QGraphicsItem::UserType + 1};
+    int type() const override {return PolygonResizeHandle::Type;}
         PolygonResizeHandle(QGraphicsItem* parent = nullptr);
 
         virtual QRectF boundingRect() const override;
@@ -23,7 +24,8 @@ class PolygonResizeHandle : public QGraphicsItem
         class HandleItem : public QGraphicsEllipseItem
         {
             public:
-
+                enum {Type = QGraphicsItem::UserType + 2};
+                int type() const override {return HandleItem::Type;}
                 HandleItem(int index, const QPointF& pos, PolygonResizeHandle* parent = nullptr);
 
                 int index() const;
@@ -31,7 +33,7 @@ class PolygonResizeHandle : public QGraphicsItem
             protected:
 
                 virtual QVariant itemChange(GraphicsItemChange change,
-                                            const QVariant& value);
+                                            const QVariant& value) override;
 
             private:
 

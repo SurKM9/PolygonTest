@@ -12,8 +12,7 @@ PolygonItem::PolygonItem(const QPainterPath& path, QGraphicsItem* parent) :
 {
     m_boundingRect = QRectF(0, 0, m_path.boundingRect().width(), m_path.boundingRect().height());
 
-    setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable |
-             QGraphicsItem::ItemSendsScenePositionChanges | QGraphicsItem::ItemSendsGeometryChanges);
+    setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable);
 
     // path needs to set otherwise moving or selecting doesn't work
     setPath(m_path);

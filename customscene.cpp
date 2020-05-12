@@ -1,51 +1,35 @@
 // qt
-#include <QGraphicsView>
 #include <QDebug>
+#include <QGraphicsView>
 
 // local
 #include "customscene.h"
 #include "polygonitem.h"
-#include "polygonresizehandle.h"
 
-
-
-CustomScene::CustomScene(QObject* parent) :
-    QGraphicsScene(parent),
-    m_polygon(nullptr)
+CustomScene::CustomScene(QObject *parent)
+    : QGraphicsScene(parent)
+    , m_polygon(nullptr)
 {
 }
 
-
-
-void CustomScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
+void CustomScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    const QPointF& m_origPoint = event->scenePos();
+    const QPointF &m_origPoint = event->scenePos();
 
     views().at(0)->setDragMode(QGraphicsView::NoDrag);
 
-    if(event->button() == Qt::LeftButton)
-    {
-        if(m_polygon == nullptr)
-        {
-            static const QVector<int> knownTypes {PolygonItem::Type, PolygonResizeHandle::Type, PolygonResizeHandle::HandleItem::Type};
-            if(auto item = itemAt(m_origPoint,views().first()->transform()))
-                if(knownTypes.contains(item->type()))
-                    return QGraphicsScene::mousePressEvent(event);
-
-            m_points.clear();
+    if (event->button() == Qt::LeftButton && event->modifiers() == Qt::ControlModifier) {
+        if (m_polygon == nullptr) {
             m_polygon = new PolygonItem({});
             addItem(m_polygon);
             storePoint(m_origPoint);
         }
 
         storePoint(m_origPoint);
+        return;
     }
 
-    if(event->button() == Qt::RightButton && m_polygon != nullptr)
-    {
-        // create resize handlers for polygon before setting it to null
-        PolygonResizeHandle* handle = new PolygonResizeHandle(m_polygon);
-
+    if (event->button() == Qt::RightButton && m_polygon != nullptr) {
         m_polygon = nullptr;
     }
 
@@ -54,12 +38,9 @@ void CustomScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
     QGraphicsScene::mousePressEvent(event);
 }
 
-
-
-void CustomScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
+void CustomScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-    if(m_polygon != nullptr)
-    {
+    if (m_polygon != nullptr) {
         previewPoint(event->scenePos());
     }
 
@@ -68,48 +49,20 @@ void CustomScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
     QGraphicsScene::mouseMoveEvent(event);
 }
 
-
-
-void CustomScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
+void CustomScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     views().at(0)->setDragMode(QGraphicsView::RubberBandDrag);
     QGraphicsScene::mouseReleaseEvent(event);
 }
 
-
-
-void CustomScene::storePoint(const QPointF& point)
+void CustomScene::storePoint(const QPointF &point)
 {
-    m_points.append(point);
-    updatePolygon();
+    if (m_polygon)
+        m_polygon->appendPoint(point);
 }
 
-
-
-void CustomScene::previewPoint(const QPointF& point)
+void CustomScene::previewPoint(const QPointF &point)
 {
-    if(m_points.size()>1)
-    {
-        m_points.replace(m_points.size()-1, point);
-        updatePolygon();
-    }
+    if (m_polygon)
+        m_polygon->updatePoint(m_polygon->localPoints().size() - 1, point);
 }
-
-
-
-void CustomScene::updatePolygon()
-{
-    QPainterPath path;
-    path.moveTo(m_points.first());
-    for(const auto& point : m_points)
-    {
-        path.lineTo(point);
-    }
-    path.closeSubpath();
-
-    if(m_polygon)
-    {
-        m_polygon->updatePath(path);
-    }
-}
-

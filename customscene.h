@@ -3,38 +3,28 @@
 
 // qt
 #include <QGraphicsScene>
-#include <QPointF>
 #include <QGraphicsSceneMouseEvent>
 #include <QPainterPath>
+#include <QPointF>
 
 // forward declaration
 class PolygonItem;
 
-
-
 class CustomScene : public QGraphicsScene
 {
 
-    public:
+public:
+    explicit CustomScene(QObject *parent = nullptr);
 
-        explicit CustomScene(QObject* parent = nullptr);
+protected:
+    virtual void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
+    virtual void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
+    virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
 
-    protected:
-
-        virtual void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
-        virtual void mouseMoveEvent(QGraphicsSceneMouseEvent* event) override;
-        virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent* event) override;
-
-    private:
-
-        //        QPointF m_origPoint;
-        PolygonItem* m_polygon;
-        //        QPainterPath m_path;
-        QVector<QPointF> m_points;
-        void storePoint(const QPointF& point);
-        void previewPoint(const QPointF& point);
-        void updatePolygon();
-
+private:
+    PolygonItem *m_polygon;
+    void storePoint(const QPointF &point);
+    void previewPoint(const QPointF &point);
 };
 
 #endif // CUSTOMSCENE_H

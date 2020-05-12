@@ -17,16 +17,22 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     customscene.cpp \
+    grippoint.cpp \
+    grippointshandler.cpp \
+    interactiveobject.cpp \
     main.cpp \
     mainwindow.cpp \
-    polygonitem.cpp \
-    polygonresizehandle.cpp
+    polygonitem.cpp
 
 HEADERS += \
+    abstractinteractiveobject.h \
     customscene.h \
+    grippoint.h \
+    grippointshandler.h \
+    interactiveobject.h \
+    itemtypes.h \
     mainwindow.h \
-    polygonitem.h \
-    polygonresizehandle.h
+    polygonitem.h
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

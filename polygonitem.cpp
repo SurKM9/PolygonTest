@@ -3,7 +3,7 @@
 #include "grippoint.h"
 #include "grippointshandler.h"
 
-PolygonItem::PolygonItem(QGraphicsItem *parentItem)
+PolygonItem::PolygonItem(QGraphicsItem* parentItem)
     : InteractiveObject(parentItem)
     , m_item(new QGraphicsPathItem(this))
     , m_points()
@@ -38,7 +38,7 @@ QRectF PolygonItem::boundingRect() const
     return m_item->boundingRect();
 }
 
-void PolygonItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+void PolygonItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
     Q_UNUSED(painter)
     Q_UNUSED(option)
@@ -55,7 +55,9 @@ void PolygonItem::initGripPoints()
 
     InteractiveObject::initGripPoints();
     for (int idx = 0; idx < m_points.size(); ++idx)
+    {
         m_gripPointsHandler->createGripPoint(GripPoint::Absolute);
+    }
 }
 
 void PolygonItem::updateGripPoints()
@@ -65,20 +67,28 @@ void PolygonItem::updateGripPoints()
     // Can be called manually when the related data updated and we'd like to reflect it in the GUI
 
     if (!m_gripPointsHandler)
+    {
         return;
+    }
 
     const QVector<QPointF> points = this->localPoints();
     if (points.isEmpty())
+    {
         return;
+    }
 
     auto grips = m_gripPointsHandler->gripPoints();
-    for (int idx = 0; idx < qMax(points.size(), grips.size()); ++idx) {
-        if (idx >= points.size()) {
+    for (int idx = 0; idx < qMax(points.size(), grips.size()); ++idx)
+    {
+        if (idx >= points.size())
+        {
             m_gripPointsHandler->removeGripPoint(grips.value(idx));
             continue;
         }
         if (idx >= grips.size())
+        {
             m_gripPointsHandler->createGripPoint(GripPoint::Absolute);
+        }
         m_gripPointsHandler->setGripPointPos(grips.value(idx), points.value(idx));
     }
     InteractiveObject::updateGripPoints();
@@ -88,25 +98,28 @@ QVector<QPointF> PolygonItem::localPoints() const
 {
     QPolygonF polygon = m_item->path().toFillPolygon();
     if (polygon.isClosed())
+    {
         polygon.removeLast();
+    }
     return mapToScene(polygon);
 }
 
-void PolygonItem::appendPoint(const QPointF &scenePoint)
+void PolygonItem::appendPoint(const QPointF& scenePoint)
 {
     m_points.append(mapFromScene(scenePoint));
     updateBoundingRect();
 }
 
-void PolygonItem::updatePoint(int at, const QPointF &scenePoint)
+void PolygonItem::updatePoint(int at, const QPointF& scenePoint)
 {
-    if (at >= 0 && at < m_points.size()) {
+    if (at >= 0 && at < m_points.size())
+    {
         m_points[at] = mapFromScene(scenePoint);
         updateBoundingRect();
     }
 }
 
-void PolygonItem::onManualMoveStart(GripPoint *gp, const QPointF &at)
+void PolygonItem::onManualMoveStart(GripPoint* gp, const QPointF& at)
 {
     Q_UNUSED(gp);
     Q_UNUSED(at);
@@ -126,7 +139,7 @@ void PolygonItem::onManualMoveStart(GripPoint *gp, const QPointF &at)
     // just keep its implementation of onManualMoveStart/Progress/Finish empty
 }
 
-void PolygonItem::onManualMoveProgress(GripPoint *gp, const QPointF &from, const QPointF &to)
+void PolygonItem::onManualMoveProgress(GripPoint* gp, const QPointF& from, const QPointF& to)
 {
     Q_UNUSED(gp);
 
@@ -135,13 +148,14 @@ void PolygonItem::onManualMoveProgress(GripPoint *gp, const QPointF &from, const
     // and apply it to GUI, if the movement is acceptable
 
     const QPointF shift = to - from;
-    if (!shift.isNull()) {
+    if (!shift.isNull())
+    {
         moveBy(shift.x(), shift.y());
         updateBoundingRect();
     }
 }
 
-void PolygonItem::onManualMoveFinish(GripPoint *gp, const QPointF &pressedAt, const QPointF &releasedAt)
+void PolygonItem::onManualMoveFinish(GripPoint* gp, const QPointF& pressedAt, const QPointF& releasedAt)
 {
     Q_UNUSED(gp);
     Q_UNUSED(pressedAt);
@@ -151,24 +165,26 @@ void PolygonItem::onManualMoveFinish(GripPoint *gp, const QPointF &pressedAt, co
     // populate the UndoCommands stack, etc
 }
 
-void PolygonItem::onManualResizeStart(GripPoint *gp, const QPointF &at)
+void PolygonItem::onManualResizeStart(GripPoint* gp, const QPointF& at)
 {
     Q_UNUSED(gp);
     Q_UNUSED(at);
 }
 
-void PolygonItem::onManualResizeProgress(GripPoint *gp, const QPointF &from, const QPointF &to)
+void PolygonItem::onManualResizeProgress(GripPoint* gp, const QPointF& from, const QPointF& to)
 {
     Q_UNUSED(from)
 
     if (!m_gripPointsHandler || !gp)
+    {
         return;
+    }
 
     const auto grips = m_gripPointsHandler->gripPoints();
     updatePoint(grips.indexOf(gp), to);
 }
 
-void PolygonItem::onManualResizeFinish(GripPoint *gp, const QPointF &pressedAt, const QPointF &releasedAt)
+void PolygonItem::onManualResizeFinish(GripPoint* gp, const QPointF& pressedAt, const QPointF& releasedAt)
 {
     Q_UNUSED(gp);
     Q_UNUSED(pressedAt);

@@ -17,11 +17,14 @@
 
 #pragma once
 
-namespace myitems {
-enum class Type
+namespace myitems
 {
-    ItemGripPoint = 1,
-    ItemGripPointsHandler,
-    ItemPolygon
-};
+    enum class Type
+    {
+        ItemGripPoint = 1,
+        ItemGripPointsHandler,
+        ItemPolygon,
+        ItemRectangle,
+        ItemEllipse
+    };
 }

@@ -6,6 +6,7 @@
 
 // forward declaration
 class CustomScene;
+class CustomView;
 
 
 
@@ -20,5 +21,6 @@ class MainWindow : public QMainWindow
     private:
 
         CustomScene* m_scene;
+        CustomView* m_view;
 };
 #endif // MAINWINDOW_H

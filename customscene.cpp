@@ -5,21 +5,25 @@
 // local
 #include "customscene.h"
 #include "polygonitem.h"
+#include "rectangleitem.h"
 
-CustomScene::CustomScene(QObject *parent)
+CustomScene::CustomScene(QObject* parent)
     : QGraphicsScene(parent)
     , m_polygon(nullptr)
+    , m_rectangle(nullptr)
 {
 }
 
-void CustomScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
+void CustomScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
-    const QPointF &m_origPoint = event->scenePos();
+    m_origPoint = event->scenePos();
 
     views().at(0)->setDragMode(QGraphicsView::NoDrag);
 
-    if (event->button() == Qt::LeftButton && event->modifiers() == Qt::ControlModifier) {
-        if (m_polygon == nullptr) {
+    if (event->button() == Qt::LeftButton && event->modifiers() == Qt::ControlModifier)
+    {
+        if (m_polygon == nullptr)
+        {
             m_polygon = new PolygonItem({});
             addItem(m_polygon);
             storePoint(m_origPoint);
@@ -29,7 +33,8 @@ void CustomScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
         return;
     }
 
-    if (event->button() == Qt::RightButton && m_polygon != nullptr) {
+    if (event->button() == Qt::RightButton && m_polygon != nullptr)
+    {
         m_polygon = nullptr;
     }
 
@@ -38,9 +43,31 @@ void CustomScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
     QGraphicsScene::mousePressEvent(event);
 }
 
-void CustomScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+void CustomScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 {
-    if (m_polygon != nullptr) {
+    if(event->buttons() == Qt::LeftButton && event->modifiers() == Qt::AltModifier)
+    {
+        if(m_rectangle == nullptr)
+        {
+            // create a rectangle
+            m_rectangle = new RectangleItem({});
+
+            // draw rectangle on the scene
+            addItem(m_rectangle);
+
+            // set the pos
+            m_rectangle->setPos(m_origPoint);
+
+            // add connections
+            // connect(m_shapeItem, &ShapeItem::addToAnnotationTabView, m_annotationTabController, &AnnotationTabController::addItem);
+        }
+
+        m_rectangle->updateRect(QRectF(0, 0, event->scenePos().x() - m_origPoint.x(),
+                                       event->scenePos().y() - m_origPoint.y()));
+    }
+
+    if (m_polygon != nullptr)
+    {
         previewPoint(event->scenePos());
     }
 
@@ -49,20 +76,25 @@ void CustomScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     QGraphicsScene::mouseMoveEvent(event);
 }
 
-void CustomScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+void CustomScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 {
     views().at(0)->setDragMode(QGraphicsView::RubberBandDrag);
+    m_rectangle = nullptr;
     QGraphicsScene::mouseReleaseEvent(event);
 }
 
-void CustomScene::storePoint(const QPointF &point)
+void CustomScene::storePoint(const QPointF& point)
 {
     if (m_polygon)
+    {
         m_polygon->appendPoint(point);
+    }
 }
 
-void CustomScene::previewPoint(const QPointF &point)
+void CustomScene::previewPoint(const QPointF& point)
 {
     if (m_polygon)
+    {
         m_polygon->updatePoint(m_polygon->localPoints().size() - 1, point);
+    }
 }

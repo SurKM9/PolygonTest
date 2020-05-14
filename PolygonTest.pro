@@ -17,24 +17,31 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     customscene.cpp \
+    customview.cpp \
     grippoint.cpp \
     grippointshandler.cpp \
     interactiveobject.cpp \
     main.cpp \
     mainwindow.cpp \
-    polygonitem.cpp
+    polygonitem.cpp \
+    rectangleitem.cpp
 
 HEADERS += \
     abstractinteractiveobject.h \
     customscene.h \
+    customview.h \
     grippoint.h \
     grippointshandler.h \
     interactiveobject.h \
     itemtypes.h \
     mainwindow.h \
-    polygonitem.h
+    polygonitem.h \
+    rectangleitem.h
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+RESOURCES += \
+    resource.qrc

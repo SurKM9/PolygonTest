@@ -9,22 +9,25 @@
 
 // forward declaration
 class PolygonItem;
+class RectangleItem;
 
 class CustomScene : public QGraphicsScene
 {
 
-public:
-    explicit CustomScene(QObject *parent = nullptr);
+    public:
+        explicit CustomScene(QObject* parent = nullptr);
 
-protected:
-    virtual void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
-    virtual void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
-    virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
+    protected:
+        virtual void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
+        virtual void mouseMoveEvent(QGraphicsSceneMouseEvent* event) override;
+        virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent* event) override;
 
-private:
-    PolygonItem *m_polygon;
-    void storePoint(const QPointF &point);
-    void previewPoint(const QPointF &point);
+    private:
+        PolygonItem* m_polygon;
+        RectangleItem* m_rectangle;
+        QPointF m_origPoint;
+        void storePoint(const QPointF& point);
+        void previewPoint(const QPointF& point);
 };
 
 #endif // CUSTOMSCENE_H

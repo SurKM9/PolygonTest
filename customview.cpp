@@ -4,36 +4,59 @@
 // local
 #include "customview.h"
 
-
-
-CustomView::CustomView(QWidget* parent) :
-    QGraphicsView(parent)
+CustomView::CustomView(QWidget *parent)
+    : QGraphicsView(parent)
+    , m_zoomPercent(100)
 {
     setRenderHint(QPainter::Antialiasing);
     setMouseTracking(true);
 }
 
-
-
-void CustomView::wheelEvent(QWheelEvent* event)
+void CustomView::wheelEvent(QWheelEvent *event)
 {
-    if(event->modifiers() & Qt::ControlModifier)
-    {
-        // Do a wheel-based zoom about the cursor position
-        double angle = event->angleDelta().y();
-        double factor = qPow(1.0015, angle);
+    if (event->modifiers() & Qt::ControlModifier) {
+        QPointF oldPos = mapToScene(event->pos());
 
-        auto targetViewportPos = event->pos();
-        auto targetScenePos = mapToScene(event->pos());
+        setZoom(m_zoomPercent + (event->delta() > 0 ? zoomStepPercent() : -zoomStepPercent()));
 
-        scale(factor, factor);
-        centerOn(targetScenePos);
-        QPointF deltaViewportPos = targetViewportPos - QPointF(viewport()->width() / 2.0, viewport()->height() / 2.0);
-        QPointF viewportCenter = mapFromScene(targetScenePos) - deltaViewportPos;
-        centerOn(mapToScene(viewportCenter.toPoint()));
+        QPointF newPos = mapToScene(event->pos());
+        QPointF delta = newPos - oldPos;
+
+        translate(delta.x(), delta.y());
+
+        Q_EMIT zoomChanged(m_zoomPercent);
 
         return;
     }
 
     QGraphicsView::wheelEvent(event);
+}
+
+qreal CustomView::minZoomLevel() const
+{
+    return 0.1;
+}
+
+qreal CustomView::maxZoomLevel() const
+{
+    return 1000;
+}
+
+qreal CustomView::zoomStepPercent() const
+{
+    return 5;
+}
+
+void CustomView::setZoom(double percent)
+{
+    percent = qBound(minZoomLevel(), percent, maxZoomLevel());
+    if (qFuzzyCompare(m_zoomPercent, percent))
+        return;
+
+    m_zoomPercent = percent;
+
+    resetTransform();
+    scale(m_zoomPercent / 100.0, m_zoomPercent / 100.0);
+
+    Q_EMIT zoomChanged(m_zoomPercent);
 }

@@ -17,15 +17,17 @@
 
 #include "grippointshandler.h"
 
-GripPointsHandler::GripPointsHandler(QGraphicsItem* parent)
+#include <QGraphicsView>
+
+GripPointsHandler::GripPointsHandler(QGraphicsItem *parent)
     : QGraphicsObject(parent)
     , AbstractInteractiveObject()
 {
-    setFlags(QGraphicsItem::ItemSendsGeometryChanges);
+    setFlags(QGraphicsItem::ItemIgnoresTransformations | QGraphicsItem::ItemSendsGeometryChanges);
     hide();
 }
 
-GripPoint* GripPointsHandler::createGripPoint(GripPoint::Location location, int idx)
+GripPoint *GripPointsHandler::createGripPoint(GripPoint::Location location, int idx)
 {
     auto grip = new GripPoint(location, this);
     m_usedPoints.insert(grip->location());
@@ -33,7 +35,7 @@ GripPoint* GripPointsHandler::createGripPoint(GripPoint::Location location, int 
     return grip;
 }
 
-void GripPointsHandler::removeGripPoint(GripPoint* handle)
+void GripPointsHandler::removeGripPoint(GripPoint *handle)
 {
     m_gripPoints.removeOne(handle);
     delete handle;
@@ -44,19 +46,17 @@ GripPoint::Locations GripPointsHandler::usedPoints() const
     return m_usedPoints;
 }
 
-QList<GripPoint*> GripPointsHandler::gripPoints() const
+QList<GripPoint *> GripPointsHandler::gripPoints() const
 {
     return m_gripPoints;
 }
 
 void GripPointsHandler::updateLayout()
 {
-    for (GripPoint* handle : m_gripPoints)
-    {
+    for (GripPoint *handle : m_gripPoints) {
         const bool used = m_usedPoints.contains(handle->location());
         handle->setIsUsed(used);
-        if (used)
-        {
+        if (used) {
             handle->updateLayout();
         }
     }
@@ -64,37 +64,59 @@ void GripPointsHandler::updateLayout()
 
 QRectF GripPointsHandler::boundingRect() const
 {
-    return parentItem() ? parentItem()->boundingRect() : QRectF();
+    QRectF bounds;
+    if (QGraphicsItem *parent = parentItem()) {
+        bounds = parent->boundingRect();
+
+        const QPointF &scaleFactor(viewScale());
+        bounds = { bounds.topLeft().x() * scaleFactor.x(), bounds.topLeft().y() * scaleFactor.y(),
+                   bounds.width() * scaleFactor.x(), bounds.height() * scaleFactor.y() };
+    }
+    return bounds;
 }
 
-void GripPointsHandler::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
+void GripPointsHandler::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     Q_UNUSED(painter)
     Q_UNUSED(option)
     Q_UNUSED(widget)
 }
 
-void GripPointsHandler::handleGripPointPress(GripPoint* handle, const QPointF& at)
+void GripPointsHandler::handleGripPointPress(GripPoint *handle, const QPointF &at)
 {
     Q_EMIT manualGeometryChangeStart(handle, at);
 }
 
-void GripPointsHandler::handleGripPointMove(GripPoint* handle, const QPointF& from, const QPointF& to)
+void GripPointsHandler::handleGripPointMove(GripPoint *handle, const QPointF &from, const QPointF &to)
 {
     Q_EMIT manualGeometryChangeProgress(handle, from, to);
 }
 
-void GripPointsHandler::handleGripPointRelease(GripPoint* handle, const QPointF& pressedAt, const QPointF& releasedAt)
+void GripPointsHandler::handleGripPointRelease(GripPoint *handle, const QPointF &pressedAt, const QPointF &releasedAt)
 {
     Q_EMIT manualGeometryChangeFinish(handle, pressedAt, releasedAt);
 }
 
-void GripPointsHandler::setGripPointPos(GripPoint* grip, const QPointF& pos)
+void GripPointsHandler::setGripPointPos(GripPoint *grip, const QPointF &pos)
 {
-    if (grip)
-    {
-        QRectF br = grip->boundingRect();
-        br.moveCenter(mapFromScene(pos));
-        grip->setPos(br.topLeft());
+    if (grip) {
+        const QPointF &currScale(viewScale());
+        const QPointF &destination(mapFromScene(pos));
+        const QPointF &destinationScaled = { destination.x() * currScale.x(), destination.y() * currScale.y() };
+        grip->setPos(destinationScaled);
     }
+}
+
+QPointF GripPointsHandler::viewScale() const
+{
+    if (QGraphicsItem *parent = parentItem()) {
+        if (scene()) {
+            if (scene()->views().size()) {
+                const QTransform &t = parent->deviceTransform(scene()->views().first()->viewportTransform());
+                return { t.m11(), t.m22() };
+            }
+        }
+    }
+
+    return { 1., 1. };
 }

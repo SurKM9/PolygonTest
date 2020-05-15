@@ -64,4 +64,6 @@ protected:
     bool m_visible = false;
 
     GripPoint::Locations m_usedPoints;
+
+    QPointF viewScale() const;
 };

@@ -156,8 +156,6 @@ void RectangleItem::onManualResizeProgress(GripPoint* gp, const QPointF& from, c
         return;
     }
 
-    const auto grips = m_gripPointsHandler->gripPoints();
-
     switch(gp->location())
     {
         case GripPoint::Top:

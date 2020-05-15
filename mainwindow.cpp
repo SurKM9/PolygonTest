@@ -2,13 +2,12 @@
 #include <QGraphicsView>
 
 // local
-#include "mainwindow.h"
 #include "customscene.h"
 #include "customview.h"
+#include "interactiveobject.h"
+#include "mainwindow.h"
 
-
-
-MainWindow::MainWindow(QWidget* parent)
+MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
     m_view = new CustomView(this);
@@ -20,7 +19,13 @@ MainWindow::MainWindow(QWidget* parent)
 
     m_scene->addPixmap(pix);
     m_view->fitInView(m_scene->sceneRect(), Qt::KeepAspectRatioByExpanding);
-
+    connect(m_view, &CustomView::zoomChanged, this, [this](qreal /*percent*/) {
+        for (auto item : m_scene->selectedItems()) {
+            if (auto iObj = qobject_cast<InteractiveObject *>(item->toGraphicsObject())) {
+                iObj->updateGripPoints();
+            }
+        }
+    });
     m_view->setScene(m_scene);
 
     setCentralWidget(m_view);
@@ -28,9 +33,4 @@ MainWindow::MainWindow(QWidget* parent)
     resize(800, 600);
 }
 
-
-
-MainWindow::~MainWindow()
-{
-}
-
+MainWindow::~MainWindow() {}

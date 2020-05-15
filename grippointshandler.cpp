@@ -17,15 +17,15 @@
 
 #include "grippointshandler.h"
 
-GripPointsHandler::GripPointsHandler(QGraphicsItem *parent)
+GripPointsHandler::GripPointsHandler(QGraphicsItem* parent)
     : QGraphicsObject(parent)
     , AbstractInteractiveObject()
 {
-    setFlags(QGraphicsItem::ItemIgnoresTransformations | QGraphicsItem::ItemSendsGeometryChanges);
+    setFlags(QGraphicsItem::ItemSendsGeometryChanges);
     hide();
 }
 
-GripPoint *GripPointsHandler::createGripPoint(GripPoint::Location location, int idx)
+GripPoint* GripPointsHandler::createGripPoint(GripPoint::Location location, int idx)
 {
     auto grip = new GripPoint(location, this);
     m_usedPoints.insert(grip->location());
@@ -33,7 +33,7 @@ GripPoint *GripPointsHandler::createGripPoint(GripPoint::Location location, int 
     return grip;
 }
 
-void GripPointsHandler::removeGripPoint(GripPoint *handle)
+void GripPointsHandler::removeGripPoint(GripPoint* handle)
 {
     m_gripPoints.removeOne(handle);
     delete handle;
@@ -44,18 +44,21 @@ GripPoint::Locations GripPointsHandler::usedPoints() const
     return m_usedPoints;
 }
 
-QList<GripPoint *> GripPointsHandler::gripPoints() const
+QList<GripPoint*> GripPointsHandler::gripPoints() const
 {
     return m_gripPoints;
 }
 
 void GripPointsHandler::updateLayout()
 {
-    for (GripPoint *handle : m_gripPoints) {
+    for (GripPoint* handle : m_gripPoints)
+    {
         const bool used = m_usedPoints.contains(handle->location());
         handle->setIsUsed(used);
         if (used)
+        {
             handle->updateLayout();
+        }
     }
 }
 
@@ -64,31 +67,32 @@ QRectF GripPointsHandler::boundingRect() const
     return parentItem() ? parentItem()->boundingRect() : QRectF();
 }
 
-void GripPointsHandler::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+void GripPointsHandler::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
     Q_UNUSED(painter)
     Q_UNUSED(option)
     Q_UNUSED(widget)
 }
 
-void GripPointsHandler::handleGripPointPress(GripPoint *handle, const QPointF &at)
+void GripPointsHandler::handleGripPointPress(GripPoint* handle, const QPointF& at)
 {
     Q_EMIT manualGeometryChangeStart(handle, at);
 }
 
-void GripPointsHandler::handleGripPointMove(GripPoint *handle, const QPointF &from, const QPointF &to)
+void GripPointsHandler::handleGripPointMove(GripPoint* handle, const QPointF& from, const QPointF& to)
 {
     Q_EMIT manualGeometryChangeProgress(handle, from, to);
 }
 
-void GripPointsHandler::handleGripPointRelease(GripPoint *handle, const QPointF &pressedAt, const QPointF &releasedAt)
+void GripPointsHandler::handleGripPointRelease(GripPoint* handle, const QPointF& pressedAt, const QPointF& releasedAt)
 {
     Q_EMIT manualGeometryChangeFinish(handle, pressedAt, releasedAt);
 }
 
-void GripPointsHandler::setGripPointPos(GripPoint *grip, const QPointF &pos)
+void GripPointsHandler::setGripPointPos(GripPoint* grip, const QPointF& pos)
 {
-    if (grip) {
+    if (grip)
+    {
         QRectF br = grip->boundingRect();
         br.moveCenter(mapFromScene(pos));
         grip->setPos(br.topLeft());

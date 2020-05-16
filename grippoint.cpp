@@ -77,14 +77,18 @@ void GripPoint::updateLayout()
         case Center: {
             destination = targetRect.center();
             c = Qt::SizeAllCursor;
-            QRectF r(m_boundRect.translated(pos()));
-            r.moveCenter(destination);
-            setPos(r.center());
             break;
         }
         case Absolute:
+            destination = pos();
             c = Qt::SizeAllCursor;
             break;
+        }
+
+        if (Center != m_location) {
+            QRectF r(m_boundRect.translated(pos()));
+            r.moveCenter(destination);
+            setPos(r.topLeft());
         }
 
         setCursor(c);

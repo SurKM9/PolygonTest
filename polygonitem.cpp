@@ -12,6 +12,8 @@ PolygonItem::PolygonItem(QGraphicsItem* parentItem)
     m_item->setBrush(QBrush(QColor(128, 128, 255, 128), Qt::SolidPattern));
 }
 
+
+
 QPainterPath PolygonItem::shape() const
 {
     // QGraphicsItem's functionality.
@@ -32,11 +34,15 @@ QPainterPath PolygonItem::shape() const
     //    thisShape.addPath(contentShape);
 }
 
+
+
 QRectF PolygonItem::boundingRect() const
 {
     // similar to ::shape() above
     return m_item->boundingRect();
 }
+
+
 
 void PolygonItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
@@ -46,6 +52,8 @@ void PolygonItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* optio
 
     // to be able to draw here, remove the QGraphicsItem::ItemHasNoContents flag
 }
+
+
 
 void PolygonItem::initGripPoints()
 {
@@ -59,6 +67,8 @@ void PolygonItem::initGripPoints()
         m_gripPointsHandler->createGripPoint(GripPoint::Absolute);
     }
 }
+
+
 
 void PolygonItem::updateGripPoints()
 {
@@ -94,6 +104,8 @@ void PolygonItem::updateGripPoints()
     InteractiveObject::updateGripPoints();
 }
 
+
+
 QVector<QPointF> PolygonItem::localPoints() const
 {
     QPolygonF polygon = m_item->path().toFillPolygon();
@@ -104,11 +116,15 @@ QVector<QPointF> PolygonItem::localPoints() const
     return mapToScene(polygon);
 }
 
+
+
 void PolygonItem::appendPoint(const QPointF& scenePoint)
 {
     m_points.append(mapFromScene(scenePoint));
     updateBoundingRect();
 }
+
+
 
 void PolygonItem::updatePoint(int at, const QPointF& scenePoint)
 {
@@ -118,6 +134,8 @@ void PolygonItem::updatePoint(int at, const QPointF& scenePoint)
         updateBoundingRect();
     }
 }
+
+
 
 void PolygonItem::onManualMoveStart(GripPoint* gp, const QPointF& at)
 {
@@ -139,6 +157,8 @@ void PolygonItem::onManualMoveStart(GripPoint* gp, const QPointF& at)
     // just keep its implementation of onManualMoveStart/Progress/Finish empty
 }
 
+
+
 void PolygonItem::onManualMoveProgress(GripPoint* gp, const QPointF& from, const QPointF& to)
 {
     Q_UNUSED(gp);
@@ -155,6 +175,8 @@ void PolygonItem::onManualMoveProgress(GripPoint* gp, const QPointF& from, const
     }
 }
 
+
+
 void PolygonItem::onManualMoveFinish(GripPoint* gp, const QPointF& pressedAt, const QPointF& releasedAt)
 {
     Q_UNUSED(gp);
@@ -165,11 +187,15 @@ void PolygonItem::onManualMoveFinish(GripPoint* gp, const QPointF& pressedAt, co
     // populate the UndoCommands stack, etc
 }
 
+
+
 void PolygonItem::onManualResizeStart(GripPoint* gp, const QPointF& at)
 {
     Q_UNUSED(gp);
     Q_UNUSED(at);
 }
+
+
 
 void PolygonItem::onManualResizeProgress(GripPoint* gp, const QPointF& from, const QPointF& to)
 {
@@ -184,12 +210,16 @@ void PolygonItem::onManualResizeProgress(GripPoint* gp, const QPointF& from, con
     updatePoint(grips.indexOf(gp), to);
 }
 
+
+
 void PolygonItem::onManualResizeFinish(GripPoint* gp, const QPointF& pressedAt, const QPointF& releasedAt)
 {
     Q_UNUSED(gp);
     Q_UNUSED(pressedAt);
     Q_UNUSED(releasedAt);
 }
+
+
 
 void PolygonItem::onSelectionChanged(bool isSelected)
 {
@@ -200,6 +230,8 @@ void PolygonItem::onSelectionChanged(bool isSelected)
 
     InteractiveObject::onSelectionChanged(isSelected);
 }
+
+
 
 void PolygonItem::updateBoundingRect()
 {

@@ -23,7 +23,7 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QPainter>
 
-GripPoint::GripPoint(Location pos, GripPointsHandler *parent)
+GripPoint::GripPoint(Location pos, GripPointsHandler* parent)
     : QGraphicsItem(parent)
     , m_listener(parent)
     , m_location(pos)
@@ -34,58 +34,64 @@ GripPoint::GripPoint(Location pos, GripPointsHandler *parent)
     setVisible(true);
 };
 
+
+
 void GripPoint::updateLayout()
 {
-    if (QGraphicsItem *targetObj = parentItem()) {
+    if (QGraphicsItem* targetObj = parentItem())
+    {
         QCursor c;
 
         const QRectF targetRect = targetObj->boundingRect();
         QPointF destination;
-        switch (m_location) {
-        case TopLeft:
-            destination = targetRect.topLeft();
-            c = isMover() ? Qt::SizeAllCursor : Qt::SizeFDiagCursor;
-            break;
-        case Top:
-            destination = { targetRect.center().x(), targetRect.top() };
-            c = isMover() ? Qt::SizeAllCursor : Qt::SizeVerCursor;
-            break;
-        case TopRight:
-            destination = targetRect.topRight();
-            c = isMover() ? Qt::SizeAllCursor : Qt::SizeBDiagCursor;
-            break;
-        case Right:
-            destination = { targetRect.right(), targetRect.center().y() };
-            c = isMover() ? Qt::SizeAllCursor : Qt::SizeHorCursor;
-            break;
-        case BottomRight:
-            destination = targetRect.bottomRight();
-            c = isMover() ? Qt::SizeAllCursor : Qt::SizeFDiagCursor;
-            break;
-        case Bottom:
-            destination = { targetRect.center().x(), targetRect.bottom() };
-            c = isMover() ? Qt::SizeAllCursor : Qt::SizeVerCursor;
-            break;
-        case BottomLeft:
-            destination = targetRect.bottomLeft();
-            c = isMover() ? Qt::SizeAllCursor : Qt::SizeBDiagCursor;
-            break;
-        case Left:
-            destination = { targetRect.left(), targetRect.center().y() };
-            c = isMover() ? Qt::SizeAllCursor : Qt::SizeHorCursor;
-            break;
-        case Center: {
-            destination = targetRect.center();
-            c = Qt::SizeAllCursor;
-            break;
-        }
-        case Absolute:
-            destination = pos();
-            c = Qt::SizeAllCursor;
-            break;
+        switch (m_location)
+        {
+            case TopLeft:
+                destination = targetRect.topLeft();
+                c = isMover() ? Qt::SizeAllCursor : Qt::SizeFDiagCursor;
+                break;
+            case Top:
+                destination = { targetRect.center().x(), targetRect.top() };
+                c = isMover() ? Qt::SizeAllCursor : Qt::SizeVerCursor;
+                break;
+            case TopRight:
+                destination = targetRect.topRight();
+                c = isMover() ? Qt::SizeAllCursor : Qt::SizeBDiagCursor;
+                break;
+            case Right:
+                destination = { targetRect.right(), targetRect.center().y() };
+                c = isMover() ? Qt::SizeAllCursor : Qt::SizeHorCursor;
+                break;
+            case BottomRight:
+                destination = targetRect.bottomRight();
+                c = isMover() ? Qt::SizeAllCursor : Qt::SizeFDiagCursor;
+                break;
+            case Bottom:
+                destination = { targetRect.center().x(), targetRect.bottom() };
+                c = isMover() ? Qt::SizeAllCursor : Qt::SizeVerCursor;
+                break;
+            case BottomLeft:
+                destination = targetRect.bottomLeft();
+                c = isMover() ? Qt::SizeAllCursor : Qt::SizeBDiagCursor;
+                break;
+            case Left:
+                destination = { targetRect.left(), targetRect.center().y() };
+                c = isMover() ? Qt::SizeAllCursor : Qt::SizeHorCursor;
+                break;
+            case Center:
+            {
+                destination = targetRect.center();
+                c = Qt::SizeAllCursor;
+                break;
+            }
+            case Absolute:
+                destination = pos();
+                c = Qt::SizeAllCursor;
+                break;
         }
 
-        if (Center != m_location) {
+        if (Center != m_location)
+        {
             QRectF r(m_boundRect.translated(pos()));
             r.moveCenter(destination);
             setPos(r.topLeft());
@@ -98,36 +104,53 @@ void GripPoint::updateLayout()
     m_path.addRect(m_boundRect);
 }
 
+
+
 QRectF GripPoint::boundingRect() const
 {
     return m_boundRect;
 }
+
+
 
 bool GripPoint::isMover() const
 {
     return gripType() == GripPoint::GripType::Mover;
 }
 
+
+
 GripPoint::GripType GripPoint::gripType() const
 {
     return m_location == Center ? GripType::Mover : GripType::Resizer;
 }
 
+
+
 bool GripPoint::isUsed() const
 {
     return m_used;
 }
+
+
+
 void GripPoint::setIsUsed(bool used)
 {
     if (m_used == used)
+    {
         return;
+    }
 
     m_used = used;
     if (!m_used)
+    {
         setVisible(false);
+    }
 }
 
-void GripPoint::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+
+
+void GripPoint::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
     Q_UNUSED(option)
     Q_UNUSED(widget)
@@ -139,25 +162,40 @@ void GripPoint::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
     painter->strokePath(m_path, strokePen);
 }
 
-void GripPoint::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+
+
+void GripPoint::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 {
     if (m_listener)
+    {
         m_listener->handleGripPointMove(this, event->lastScenePos(), event->scenePos());
+    }
 }
 
-void GripPoint::mousePressEvent(QGraphicsSceneMouseEvent *event)
+
+
+void GripPoint::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
-    if (event->button() == Qt::LeftButton) {
+    if (event->button() == Qt::LeftButton)
+    {
         if (m_listener)
+        {
             m_listener->handleGripPointPress(this, event->scenePos());
+        }
         event->accept();
-    } else {
+    }
+    else
+    {
         event->ignore();
     }
 }
 
-void GripPoint::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+
+
+void GripPoint::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 {
     if (m_listener)
+    {
         m_listener->handleGripPointRelease(this, event->buttonDownScenePos(event->button()), event->scenePos());
+    }
 }

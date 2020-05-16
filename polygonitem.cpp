@@ -9,7 +9,7 @@ PolygonItem::PolygonItem(QGraphicsItem* parentItem)
     , m_points()
 {
     setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemHasNoContents);
-    m_item->setBrush(Qt::gray);
+    m_item->setBrush(QBrush(QColor(128, 128, 255, 128), Qt::SolidPattern));
 }
 
 QPainterPath PolygonItem::shape() const

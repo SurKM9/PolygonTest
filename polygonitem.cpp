@@ -216,8 +216,11 @@ void PolygonItem::onManualResizeProgress(GripPoint* gp, const QPointF& from, con
         return;
     }
 
-    const auto grips = m_gripPointsHandler->gripPoints();
-    updatePoint(grips.indexOf(gp), to);
+    if(scene() && scene()->sceneRect().contains(to))
+    {
+        const auto grips = m_gripPointsHandler->gripPoints();
+        updatePoint(grips.indexOf(gp), to);
+    }
 }
 
 

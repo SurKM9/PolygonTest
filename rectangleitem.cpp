@@ -1,3 +1,6 @@
+// qt
+#include <QGraphicsScene>
+
 // local
 #include "rectangleitem.h"
 #include "grippoint.h"
@@ -117,10 +120,42 @@ void RectangleItem::onManualMoveProgress(GripPoint* gp, const QPointF& from, con
     // validate the desired movement, check for collisions or whatever,
     // and apply it to GUI, if the movement is acceptable
 
+    //    QPointF shift = to - from;
+    //    if (!shift.isNull())
+    //    {
+    //        moveBy(shift.x(), shift.y());
+    //        updateBoundingRect();
+    //    }
+
     const QPointF shift = to - from;
     if (!shift.isNull())
     {
         moveBy(shift.x(), shift.y());
+
+        // get the new moved position
+        QPointF newPos = pos();
+
+        // restricts the item from moving outside the
+        // image
+        if (newPos.x() < 0)
+        {
+            newPos.setX(0);
+        }
+        else if (newPos.x() + boundingRect().right() > scene()->width())
+        {
+            newPos.setX(scene()->width() - boundingRect().width());
+        }
+
+        if (newPos.y() < 0)
+        {
+            newPos.setY(0);
+        }
+        else if (newPos.y() + boundingRect().bottom() > scene()->height())
+        {
+            newPos.setY(scene()->height() - boundingRect().height());
+        }
+
+        setPos(newPos);
         updateBoundingRect();
     }
 }

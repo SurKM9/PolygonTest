@@ -166,47 +166,22 @@ void PolygonItem::onManualMoveProgress(GripPoint* gp, const QPointF& from, const
 {
     Q_UNUSED(gp);
 
-    // It's a place to check if the current item is movable,
-    // validate the desired movement, check for collisions or whatever,
-    // and apply it to GUI, if the movement is acceptable
-
-    //    const QPointF shift = to - from;
-    //    if (!shift.isNull())
-    //    {
-    //        moveBy(shift.x(), shift.y());
-    //        updateBoundingRect();
-    //    }
-
-    const QPointF shift = to - from;
+    QPointF shift = to - from;
     if (!shift.isNull())
     {
-        moveBy(shift.x(), shift.y());
-
-        // get the new moved position
-        QPointF newPos = pos();
-
-        // restricts the item from moving outside the
-        // image
-        if (newPos.x() < 0)
+        if(auto scene = this->scene())
         {
-            newPos.setX(0);
-        }
-        else if (newPos.x() + boundingRect().right() > scene()->width())
-        {
-            newPos.setX(scene()->width() - boundingRect().width());
-        }
+            const QRectF& sceneRect = scene->sceneRect();
+            for( const QPointF& currentPoint : localPoints())
+            {
+                const QPointF& upcomingPoint = currentPoint + shift;
+                if(!sceneRect.contains(upcomingPoint))
+                    return;
+            }
 
-        if (newPos.y() < 0)
-        {
-            newPos.setY(0);
+            moveBy(shift.x(),shift.y());
+            updateBoundingRect();
         }
-        else if (newPos.y() + boundingRect().bottom() > scene()->height())
-        {
-            newPos.setY(scene()->height() - boundingRect().height());
-        }
-
-        setPos(newPos);
-        updateBoundingRect();
     }
 }
 
@@ -241,8 +216,11 @@ void PolygonItem::onManualResizeProgress(GripPoint* gp, const QPointF& from, con
         return;
     }
 
-    const auto grips = m_gripPointsHandler->gripPoints();
-    updatePoint(grips.indexOf(gp), to);
+    if(scene() && scene()->sceneRect().contains(to))
+    {
+        const auto grips = m_gripPointsHandler->gripPoints();
+        updatePoint(grips.indexOf(gp), to);
+    }
 }
 
 

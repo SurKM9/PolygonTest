@@ -110,53 +110,33 @@ void RectangleItem::onManualMoveStart(GripPoint* gp, const QPointF& at)
 
 }
 
-
-
 void RectangleItem::onManualMoveProgress(GripPoint* gp, const QPointF& from, const QPointF& to)
 {
     Q_UNUSED(gp);
 
-    // It's a place to check if the current item is movable,
-    // validate the desired movement, check for collisions or whatever,
-    // and apply it to GUI, if the movement is acceptable
-
-    //    QPointF shift = to - from;
-    //    if (!shift.isNull())
-    //    {
-    //        moveBy(shift.x(), shift.y());
-    //        updateBoundingRect();
-    //    }
-
-    const QPointF shift = to - from;
+    QPointF shift = to - from;
     if (!shift.isNull())
     {
-        moveBy(shift.x(), shift.y());
-
-        // get the new moved position
-        QPointF newPos = pos();
-
-        // restricts the item from moving outside the
-        // image
-        if (newPos.x() < 0)
+        const QRectF& upcomingRect = sceneBoundingRect().translated(shift);
+        if(auto scene = this->scene())
         {
-            newPos.setX(0);
-        }
-        else if (newPos.x() + boundingRect().right() > scene()->width())
-        {
-            newPos.setX(scene()->width() - boundingRect().width());
-        }
+            const QRectF& sceneRect = scene->sceneRect();
+            if(!sceneRect.contains(upcomingRect))
+            {
+                if(upcomingRect.right() > sceneRect.right())
+                    shift.rx() += sceneRect.right()-upcomingRect.right();
+                else if(upcomingRect.left() < sceneRect.left())
+                    shift.rx() -= (upcomingRect.left()-sceneRect.left());
 
-        if (newPos.y() < 0)
-        {
-            newPos.setY(0);
-        }
-        else if (newPos.y() + boundingRect().bottom() > scene()->height())
-        {
-            newPos.setY(scene()->height() - boundingRect().height());
-        }
+                if(upcomingRect.top() < sceneRect.top())
+                    shift.ry() += sceneRect.top() - upcomingRect.top();
+                else if(upcomingRect.bottom() > sceneRect.bottom())
+                    shift.ry() -= upcomingRect.bottom() - sceneRect.bottom();
+            }
 
-        setPos(newPos);
-        updateBoundingRect();
+            moveBy(shift.x(), shift.y());
+            updateBoundingRect();
+        }
     }
 }
 

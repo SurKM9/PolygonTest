@@ -171,45 +171,58 @@ void RectangleItem::onManualResizeProgress(GripPoint* gp, const QPointF& from, c
         return;
     }
 
+    QRectF upcomingRect(m_rect);
     switch(gp->location())
     {
         case GripPoint::Top:
-            m_rect.setTop(mapFromScene(to).y());
+            upcomingRect.setTop(mapFromScene(to).y());
             break;
 
         case GripPoint::Right:
-            m_rect.setRight(mapFromScene(to).x());
+            upcomingRect.setRight(mapFromScene(to).x());
             break;
 
         case GripPoint::Bottom:
-            m_rect.setBottom(mapFromScene(to).y());
+            upcomingRect.setBottom(mapFromScene(to).y());
             break;
 
         case GripPoint::Left:
-            m_rect.setLeft(mapFromScene(to).x());
+            upcomingRect.setLeft(mapFromScene(to).x());
             break;
 
         case GripPoint::TopLeft:
-            m_rect.setTopLeft(mapFromScene(to));
+            upcomingRect.setTopLeft(mapFromScene(to));
             break;
 
         case GripPoint::TopRight:
-            m_rect.setTopRight(mapFromScene(to));
+            upcomingRect.setTopRight(mapFromScene(to));
             break;
 
         case GripPoint::BottomRight:
-            m_rect.setBottomRight(mapFromScene(to));
+            upcomingRect.setBottomRight(mapFromScene(to));
             break;
 
         case GripPoint::BottomLeft:
-            m_rect.setBottomLeft(mapFromScene(to));
+            upcomingRect.setBottomLeft(mapFromScene(to));
             break;
 
         default:
             break;
     }
 
-    updateRect(m_rect);
+
+    if(auto scene = this->scene())
+    {
+        const QRectF& sceneRect = scene->sceneRect();
+        QRectF upcomingRectScene = mapToScene(upcomingRect).boundingRect();
+        if(!sceneRect.contains(upcomingRectScene))
+        {
+            upcomingRectScene = sceneRect.intersected(upcomingRectScene);
+            upcomingRect = mapFromScene(upcomingRectScene).boundingRect();
+        }
+    }
+
+    updateRect(upcomingRect);
 }
 
 

@@ -24,7 +24,8 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     polygonitem.cpp \
-    rectangleitem.cpp
+    rectangleitem.cpp \
+    sbxperiment.cpp
 
 HEADERS += \
     abstractinteractiveobject.h \
@@ -36,7 +37,8 @@ HEADERS += \
     itemtypes.h \
     mainwindow.h \
     polygonitem.h \
-    rectangleitem.h
+    rectangleitem.h \
+    sbxperiment.h
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -45,3 +47,6 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 RESOURCES += \
     resource.qrc
+
+FORMS += \
+    sbxperiment.ui

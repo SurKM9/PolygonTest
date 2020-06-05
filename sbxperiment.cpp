@@ -125,7 +125,8 @@ void ScrollSyncer::onScrolled(int val)
 
 void ScrollSyncer::scrollToPercent(QScrollBar* scroll, qreal percent) const
 {
-    //QSignalBlocker signalBlocker(scroll);
+    disconnect(scroll, &QScrollBar::valueChanged, this, &ScrollSyncer::onScrolled);
     const qreal onePercent = m_onePercent[scroll];
     scroll->setValue(percent * onePercent);
+    connect(scroll, &QScrollBar::valueChanged, this, &ScrollSyncer::onScrolled);
 }

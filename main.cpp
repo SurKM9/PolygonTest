@@ -3,7 +3,7 @@
 
 #include <QApplication>
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
     QApplication a(argc, argv);
     MainWindow w;
@@ -14,6 +14,7 @@ int main(int argc, char *argv[])
     ScrollSyncer ss;
     ss.addScrollBar(x.scroll1());
     ss.addScrollBar(x.scroll2());
+    ss.addScrollBar(x.scroll3());
 
     x.show();
 

@@ -20,44 +20,46 @@
 #include <QMap>
 #include <QScrollBar>
 #include <QWidget>
-namespace Ui {
-class SBXperiment;
+namespace Ui
+{
+    class SBXperiment;
 }
 
 class SBXperiment : public QWidget
 {
-    Q_OBJECT
+        Q_OBJECT
 
-public:
-    explicit SBXperiment(QWidget *parent = nullptr);
-    ~SBXperiment();
+    public:
+        explicit SBXperiment(QWidget* parent = nullptr);
+        ~SBXperiment();
 
-    QScrollBar *scroll1() const;
-    QScrollBar *scroll2() const;
+        QScrollBar* scroll1() const;
+        QScrollBar* scroll2() const;
+        QScrollBar* scroll3() const;
 
-private:
-    Ui::SBXperiment *ui;
+    private:
+        Ui::SBXperiment* ui;
 
-private slots:
-    void on_spinBox_valueChanged(int val);
-    void on_spinBox2_valueChanged(int val);
+    private slots:
+        void on_spinBox_valueChanged(int val);
+        void on_spinBox2_valueChanged(int val);
 };
 
 class ScrollSyncer : public QObject
 {
-    Q_OBJECT
-public:
-    ScrollSyncer(QObject *parent = nullptr);
+        Q_OBJECT
+    public:
+        ScrollSyncer(QObject* parent = nullptr);
 
-    void addScrollBar(QScrollBar *sb);
-    void removeScrollBar(QScrollBar *sb);
+        void addScrollBar(QScrollBar* sb);
+        void removeScrollBar(QScrollBar* sb);
 
-private slots:
-    void onScrolled(int val);
-    void onRangeChanged(int min, int max);
+    private slots:
+        void onScrolled(int val);
+        void onRangeChanged(int min, int max);
 
-private:
-    QMap<QScrollBar *, qreal> m_onePercent;
-    void updateOnePercent(QScrollBar *fromScrollBar);
-    void scrollToPercent(QScrollBar *scroll, qreal percent) const;
+    private:
+        QMap<QScrollBar*, qreal> m_onePercent;
+        void updateOnePercent(QScrollBar* fromScrollBar);
+        void scrollToPercent(QScrollBar* scroll, qreal percent) const;
 };

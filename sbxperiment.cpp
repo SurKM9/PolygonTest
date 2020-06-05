@@ -20,8 +20,9 @@
 #include "ui_sbxperiment.h"
 
 #include <QDebug>
+#include <QTableWidget>
 
-SBXperiment::SBXperiment(QWidget *parent)
+SBXperiment::SBXperiment(QWidget* parent)
     : QWidget(parent)
     , ui(new Ui::SBXperiment)
 {
@@ -29,6 +30,8 @@ SBXperiment::SBXperiment(QWidget *parent)
 
     ui->spinBox->setValue(100);
     ui->spinBox2->setValue(2000);
+    ui->tableWidget->setColumnCount(10);
+    ui->tableWidget->setRowCount(10);
 }
 
 SBXperiment::~SBXperiment()
@@ -46,25 +49,32 @@ void SBXperiment::on_spinBox2_valueChanged(int val)
     ui->horizontalScrollBar_2->setMaximum(val);
 }
 
-QScrollBar *SBXperiment::scroll1() const
+QScrollBar* SBXperiment::scroll1() const
 {
     return ui->horizontalScrollBar;
 }
 
-QScrollBar *SBXperiment::scroll2() const
+QScrollBar* SBXperiment::scroll2() const
 {
     return ui->horizontalScrollBar_2;
 }
 
-ScrollSyncer::ScrollSyncer(QObject *parent)
+QScrollBar* SBXperiment::scroll3() const
+{
+    return ui->tableWidget->horizontalScrollBar();
+}
+
+ScrollSyncer::ScrollSyncer(QObject* parent)
     : QObject(parent)
 {
 }
 
-void ScrollSyncer::addScrollBar(QScrollBar *sb)
+void ScrollSyncer::addScrollBar(QScrollBar* sb)
 {
     if (m_onePercent.contains(sb))
+    {
         return;
+    }
 
     connect(sb, &QScrollBar::rangeChanged, this, &ScrollSyncer::onRangeChanged);
     connect(sb, &QScrollBar::valueChanged, this, &ScrollSyncer::onScrolled);
@@ -72,42 +82,50 @@ void ScrollSyncer::addScrollBar(QScrollBar *sb)
     updateOnePercent(sb);
 }
 
-void ScrollSyncer::removeScrollBar(QScrollBar *sb)
+void ScrollSyncer::removeScrollBar(QScrollBar* sb)
 {
-    if (m_onePercent.remove(sb) > 0) {
+    if (m_onePercent.remove(sb) > 0)
+    {
         disconnect(sb, &QScrollBar::rangeChanged, this, &ScrollSyncer::onRangeChanged);
         disconnect(sb, &QScrollBar::valueChanged, this, &ScrollSyncer::onScrolled);
     }
 }
 
-void ScrollSyncer::updateOnePercent(QScrollBar *fromScrollBar)
+void ScrollSyncer::updateOnePercent(QScrollBar* fromScrollBar)
 {
     if (!fromScrollBar)
+    {
         return;
+    }
 
     m_onePercent[fromScrollBar] = qreal(fromScrollBar->maximum()) / 100.;
 }
 
 void ScrollSyncer::onRangeChanged(int /*min*/, int /*max*/)
 {
-    if (auto sb = qobject_cast<QScrollBar *>(sender()))
+    if (auto sb = qobject_cast<QScrollBar*>(sender()))
+    {
         updateOnePercent(sb);
+    }
 }
 
 void ScrollSyncer::onScrolled(int val)
 {
-    if (auto sb = qobject_cast<QScrollBar *>(sender())) {
+    if (auto sb = qobject_cast<QScrollBar*>(sender()))
+    {
         const qreal percent = qreal(val) / m_onePercent[sb];
 
         for (auto scroll : m_onePercent.keys())
             if (scroll != sb)
+            {
                 scrollToPercent(scroll, percent);
+            }
     }
 }
 
-void ScrollSyncer::scrollToPercent(QScrollBar *scroll, qreal percent) const
+void ScrollSyncer::scrollToPercent(QScrollBar* scroll, qreal percent) const
 {
-    QSignalBlocker signalBlocker(scroll);
+    //QSignalBlocker signalBlocker(scroll);
     const qreal onePercent = m_onePercent[scroll];
     scroll->setValue(percent * onePercent);
 }

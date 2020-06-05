@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>607</width>
-    <height>76</height>
+    <height>205</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -63,6 +63,9 @@
       </widget>
      </item>
     </layout>
+   </item>
+   <item row="2" column="0" colspan="2">
+    <widget class="QTableWidget" name="tableWidget"/>
    </item>
   </layout>
  </widget>

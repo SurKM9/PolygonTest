@@ -117,25 +117,14 @@ void KeyPointItem::updateGripPoints()
 
 QVector<QPointF> KeyPointItem::localPoints() const
 {
-    QVector<QPointF> pointsTable;
-    QPainterPath p = m_item->path();
-
-    qDebug() << p.elementCount();
-
-    for (int i = 0; i < p.elementCount(); ++i)
-    {
-        pointsTable.push_back(p.elementAt(i));
-    }
-
-    return pointsTable;
-    /*QPolygonF polygon = m_item->path().toFillPolygon();
+    QPolygonF polygon = m_item->path().toFillPolygon();
 
     if (polygon.isClosed())
     {
         polygon.removeLast();
     }
 
-    return mapToScene(polygon);*/
+    return mapToScene(polygon);
 }
 
 

@@ -25,6 +25,7 @@ namespace myitems
         ItemGripPointsHandler,
         ItemPolygon,
         ItemRectangle,
-        ItemEllipse
+        ItemEllipse,
+        ItemKeyPoint
     };
 }

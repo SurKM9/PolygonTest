@@ -8,6 +8,7 @@
 #include "mainwindow.h"
 #include "polygonitem.h"
 #include "rectangleitem.h"
+#include "keypointitem.h"
 
 MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent)
@@ -45,6 +46,9 @@ MainWindow::MainWindow(QWidget* parent)
     m_view->setScene(m_scene);
 
     setCentralWidget(m_view);
+
+    m_keyPoint = new KeyPointItem({});
+    m_scene->addItem(m_keyPoint);
 
     resize(800, 600);
 }

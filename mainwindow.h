@@ -7,6 +7,7 @@
 // forward declaration
 class CustomScene;
 class CustomView;
+class KeyPointItem;
 
 
 
@@ -22,5 +23,6 @@ class MainWindow : public QMainWindow
 
         CustomScene* m_scene;
         CustomView* m_view;
+        KeyPointItem* m_keyPoint;
 };
 #endif // MAINWINDOW_H

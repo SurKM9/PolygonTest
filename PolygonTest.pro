@@ -21,6 +21,7 @@ SOURCES += \
     grippoint.cpp \
     grippointshandler.cpp \
     interactiveobject.cpp \
+    keypointitem.cpp \
     main.cpp \
     mainwindow.cpp \
     polygonitem.cpp \
@@ -35,6 +36,7 @@ HEADERS += \
     grippointshandler.h \
     interactiveobject.h \
     itemtypes.h \
+    keypointitem.h \
     mainwindow.h \
     polygonitem.h \
     rectangleitem.h \
@@ -49,4 +51,5 @@ RESOURCES += \
     resource.qrc
 
 FORMS += \
+    media.ui \
     sbxperiment.ui
